@@ -1,6 +1,7 @@
 package generalassembly.yuliyakaleda.solution_code_thread_safe;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -49,7 +50,10 @@ public class MainActivity extends AppCompatActivity{
     super.onActivityResult(requestCode, resultCode, data);
     if (requestCode == PICK_IMAGE_REQUEST && resultCode == MainActivity.RESULT_OK && null != data) {
       Uri selectedImage = data.getData();
-      //TODO: Create the async task and execute it
+
+      ImageProcessingAsyncTask task = new ImageProcessingAsyncTask();
+      task.execute(selectedImage);
+
     }
   }
 
@@ -62,11 +66,11 @@ public class MainActivity extends AppCompatActivity{
   }
 
   //TODO: Fill in the parameter types
-  private class ImageProcessingAsyncTask extends AsyncTask<> {
+  private class ImageProcessingAsyncTask extends AsyncTask<android.net.Uri, Integer, Bitmap> {
 
     //TODO: Fill in the parameter type
     @Override
-    protected Bitmap doInBackground() {
+    protected Bitmap doInBackground(Uri... params) {
       try {
         Bitmap bitmap = BitmapFactory.decodeStream(getContentResolver().openInputStream(params[0]));
         return invertImageColors(bitmap);
@@ -78,14 +82,15 @@ public class MainActivity extends AppCompatActivity{
 
     //TODO: Fill in the parameter type
     @Override
-    protected void onProgressUpdate() {
+    protected void onProgressUpdate(Integer... values) {
       super.onProgressUpdate(values);
       //TODO: Update the progress bar
     }
 
     //TODO: Fill in the parameter type
     @Override
-    protected void onPostExecute() {
+    protected void onPostExecute(Bitmap bitmap) {
+      mImageView.setImageBitmap(bitmap);
       //TODO: Complete this method
     }
 
